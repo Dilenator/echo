@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'pages/entries.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -10,8 +12,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-  
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: EntriesPage(),
     );
     }
     }
