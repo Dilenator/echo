@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'pages/entries.dart';
 import 'models/entry_database.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //calling on initialise method in entry db
   await EntryDB.init();
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => EntryDB(),
+      child: const MyApp(),
+    ));
 }
 
 class MyApp extends StatelessWidget {
