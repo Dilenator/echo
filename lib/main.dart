@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'pages/entries.dart';
+import 'models/entry_database.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await EntryDB.init();
+
   runApp(const MyApp());
 }
 
