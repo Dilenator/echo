@@ -9,6 +9,12 @@ class EntriesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Entries'),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to the Add Entry page
+        },
+        child: const Icon(Icons.add),
+      ),
       body: const Center(
         child: Text('This is the Entries Page'),
       ),
