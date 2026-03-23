@@ -23,7 +23,7 @@ import 'entry.dart';
 class EntryDB extends ChangeNotifier {
   static late Isar isar;
 
-  static List<Entry> currentEntries = [];
+  List<Entry> currentEntries = [];
 
   //initialise isar db
   static Future<void> init() async {
@@ -56,6 +56,18 @@ class EntryDB extends ChangeNotifier {
     currentEntries.clear();
 
     currentEntries.addAll(entriesSortedByDate);
+
+    for(var entry in currentEntries){
+      debugPrint(
+
+        // Console check to see if db is working=
+          'ALLLLLLLLLLLLLLLLLLLEEEEEEEEEERRRRRRRRRRRRTTTTTTTT'
+          'Title: ${entry.title}, Content: ${entry.content}, Mood: ${entry.mood}, Date: ${entry.date}',
+
+      );
+    }
+
+
     notifyListeners();  
 
   }
