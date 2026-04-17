@@ -105,6 +105,67 @@ class _AddEntryPageState extends State<AddEntryPage>{
                     ),
                   ),
                   const SizedBox(height: 16),
+                
+                // selecting mood of 
+                const Text(
+                  "How are you? feeling today?",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white
+                  ),
+                ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: _moods.map((pair) {
+                      final mood = pair.$1;
+                      final emoji = pair.$2;
+                      final selected = _selectedMood == mood;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedMood = mood),
+                        child: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          border: selected
+                            ? Border.all(color: Colors.yellow, width: 3) : null,
+                        ),
+                        child: Center(
+                          child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                
+                
+                // What happned box
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'What happened? (optional)',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _whatHappened,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white54),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+
                 ]
               )
             ),
