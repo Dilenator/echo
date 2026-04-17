@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../models/entry_database.dart';
 import 'package:isar/isar.dart';
 import '../models/entry.dart';
+import 'add_entry.dart';
+
 
 
 
@@ -95,8 +97,13 @@ class _EntriesPageState extends State<EntriesPage> {
         title: const Text('Entries'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: createEntry,
-        child: const Icon(Icons.add),
+      onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AddEntryPage()),
+    );
+    },        
+    child: const Icon(Icons.add),
       ),
       // body: const Center(
       //   child: Text('This is the Entries Page'),
