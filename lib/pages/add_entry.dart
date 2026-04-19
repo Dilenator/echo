@@ -108,7 +108,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
                 
                 // selecting mood of 
                 const Text(
-                  "How are you? feeling today?",
+                  "How are you feeling today?",
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white
@@ -129,7 +129,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          border: selected
+                          border: selected // When mood selected, YELLOW Borderaround Emoji to indicate selection
                             ? Border.all(color: Colors.yellow, width: 3) : null,
                         ),
                         child: Center(
@@ -165,6 +165,46 @@ class _AddEntryPageState extends State<AddEntryPage>{
                   ),
                   const SizedBox(height: 24),
 
+                // WHY ? box
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Why do you think it happened? (optional)',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    
+                    ),
+
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _whyItHappened,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white54),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Save entry
+                  ElevatedButton(
+                    onPressed: _saveEntry,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: _blue, // calm blue txt
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Save Entry', style: TextStyle(fontSize: 16)),
+                  )
+
+      
 
                 ]
               )
