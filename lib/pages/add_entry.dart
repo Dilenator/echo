@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,6 +98,17 @@ class _AddEntryPageState extends State<AddEntryPage>{
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: GestureDetector(
+                    onTap: () => Navigator.pop(context), //go back to prev page (Entries)
+                    child: const Icon(Icons.close, color: Colors.white, size: 28),
+                    ),
+                ),
+                  const SizedBox(height: 0),
+
+
                   const Text(
                     'Add New Entry',
                     style: TextStyle(
@@ -104,7 +117,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
                       color: Colors.white
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                 
                 // selecting mood of 
                 const Text(
@@ -114,7 +127,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
                     color: Colors.white
                   ),
                 ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: _moods.map((pair) {
@@ -188,7 +201,46 @@ class _AddEntryPageState extends State<AddEntryPage>{
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+
+                  //DATE button
+                  ElevatedButton(
+                    onPressed: _pickDate,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: _blue, // calm blue txt
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text('Select Date: ${_formatDate(_selectedDate)}', style: const TextStyle(fontSize: 16)),
+                  ),  
+
+                  const SizedBox(height: 16),
+                  
+                  // img
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      width: double.infinity,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white54),
+                      ),
+                      child: _imagePath == null
+                        ? const Center(child: Text('Tap to add image', style: TextStyle(color: Colors.white70)))
+                        : Image.file(File(_imagePath!), fit: BoxFit.cover),
+                    ),
+
+                  ),
+                  const SizedBox(height: 16),
+
+
+
+
 
                   // Save entry
                   ElevatedButton(
@@ -203,6 +255,8 @@ class _AddEntryPageState extends State<AddEntryPage>{
                     ),
                     child: const Text('Save Entry', style: TextStyle(fontSize: 16)),
                   )
+
+                  
 
       
 
