@@ -8,7 +8,10 @@ import '../models/entry_database.dart';
 
 
 class AddEntryPage extends StatefulWidget {
-  const AddEntryPage({super.key});
+  final Entry? entry; // if entry null, create new entry, else, EDIT existing one
+  
+  const AddEntryPage({super.key, this.entry});
+
 
   @override
   State<AddEntryPage> createState() => _AddEntryPageState();
@@ -22,6 +25,20 @@ class _AddEntryPageState extends State<AddEntryPage>{
   Mood _selectedMood = Mood.happy;
   DateTime _selectedDate = DateTime.now();
   String? _imagePath;
+
+  @override
+  void initState(){
+    super.initState();
+    if (widget.entry != null) {
+      _whatHappened.text = widget.entry!.title ?? '';
+      _whyItHappened.text = widget.entry!.content ?? '';
+      _selectedMood = widget.entry!.mood;
+      _selectedDate = widget.entry!.date;
+      _imagePath = widget.entry!.imagePath;
+    }
+  }
+
+
 
   // UI COLOUR
   final _blue = const Color(0xFF4A6FA5);
@@ -56,6 +73,16 @@ class _AddEntryPageState extends State<AddEntryPage>{
   }
 
   Future<void> _saveEntry() async {
+  if(widget.entry != null){ //IF IT EXISTS , EDIT ENTRY
+    widget.entry!.title = _whatHappened.text;
+    widget.entry!.content = _whyItHappened.text;
+    widget.entry!.mood = _selectedMood;
+    widget.entry!.date = _selectedDate;
+    widget.entry!.imagePath = _imagePath;
+
+    await context.read<EntryDB>().addEntry(widget.entry!);
+  
+  }else{
     final newEntry = Entry();
       newEntry.title = _whatHappened.text;
       newEntry.content = _whyItHappened.text;
@@ -64,7 +91,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
       newEntry.imagePath = _imagePath;
 
     await context.read<EntryDB>().addEntry(newEntry);
-
+  }
     if (!mounted) return;
     Navigator.pop(context);
 
@@ -129,6 +156,8 @@ class _AddEntryPageState extends State<AddEntryPage>{
                 ),
                   const SizedBox(height: 10),
                   Row(
+
+                    //mood
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: _moods.map((pair) {
                       final mood = pair.$1;

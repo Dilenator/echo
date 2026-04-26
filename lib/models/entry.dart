@@ -31,7 +31,7 @@ String moodEmoji(Mood mood) {
 }
 
 
-@Collection() // <-- 
+@Collection() 
 class Entry{
   Id id = Isar.autoIncrement;
   String? title;

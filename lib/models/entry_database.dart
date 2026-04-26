@@ -20,22 +20,22 @@ import 'entry.dart';
 
 
 
-class EntryDB extends ChangeNotifier {
+class EntryDB extends ChangeNotifier { //notify UI when data changes. auto updates UI when notifyListeners is called.
   static late Isar isar;
 
   List<Entry> currentEntries = [];
 
   //initialise isar db
-  static Future<void> init() async {
+  static Future<void> init() async { // async means we wait for db to open before doing anytinng else
     final dir = await getApplicationDocumentsDirectory();
-
+    //wait for isar for db ''await''
     isar = await Isar.open(
       [EntrySchema],
       directory: dir.path,
     );
   }
 
-  //create
+  //create entry
   Future<void> addEntry(Entry entry) async {
     await isar.writeTxn(() async {
       await isar.entrys.put(entry);

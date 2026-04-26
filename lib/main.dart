@@ -7,13 +7,13 @@ import 'package:provider/provider.dart';
 
 void main() async {
   //test
-  //print("hii");
+  //print("test");
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   //calling on initialise method in entry db
 
   final entryDB = EntryDB();
-  print(entryDB.currentEntries.length);
+  //print(entryDB.currentEntries.length);
   
   await EntryDB.init();
 

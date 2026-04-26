@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../models/entry_database.dart';
-import 'package:isar/isar.dart';
-import '../models/entry.dart';
-import 'add_entry.dart';
+import 'dart:io'; //forloading image from phone storage
+import 'package:flutter/material.dart'; //flutter UI library
+import 'package:provider/provider.dart'; // provider for state management (notifyListeners)
 
+import '../models/entry.dart';//entry model and moodemoji
+import '../models/entry_database.dart'; //db
+import 'add_entry.dart'; //add entries page
 
 
 
@@ -15,87 +15,95 @@ class EntriesPage extends StatefulWidget {
 }
 
 class _EntriesPageState extends State<EntriesPage> {
-  final entryTitle = TextEditingController();
-  final entryContent = TextEditingController();
-  //dropdown for mood
-  final List<Mood> moods = Mood.values;
-  final entryDate = DateTime.now();
-  //optional image path
-  final entryImagePath = TextEditingController();
+  final _blue = const Color(0xFF4A6FA5); // final so it doesnt change after intialisation
+  final _cream = const Color(0xFFF5F5DC);
 
-  //ACTIONS 
+  //date for entry with day, date, month, year
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
 
-  void createEntry(){
+  void _viewEntry(BuildContext context, Entry entry) {
     showDialog(
       context: context,
+      //return popup widget to display
       builder: (context) => AlertDialog(
+        //title
+        title: Text(_formatDate(entry.date)),
+        
+        //content of popup
+
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: entryTitle,
-              decoration: const InputDecoration(hintText: 'Enter entry title...'),
-            ),
-            
-              const SizedBox(height:10),
-              TextField(
-                controller: entryContent,
-                decoration: const InputDecoration(hintText: 'Enter entry content...'),
+            //mood emoji
+            Text('Mood: ${moodEmoji(entry.mood)}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
 
-              ),
+            //what happened
+            Text('What happened: ${entry.title ?? 'Not provided'}'),
+            const SizedBox(height: 8),
+
+            //why it happened
+            Text('Why it happened: ${entry.content ?? 'Not provided'}'),
+            const SizedBox(height: 8),
+
+            //image
+            if (entry.imagePath != null)
+              Image.file(File(entry.imagePath!), height: 100, fit: BoxFit.cover),
+
           ],
         ),
+
+        //close button of popup
+        // actions: [
+        //   TextButton(
+        //     onPressed: () => Navigator.pop(context),
+        //     child: const Text('Close'),
+        //   ),
+        // ],
+
         actions: [
-          //note- didnt add async and await so it is instant and adds entry instantly without waiting.
-          // ^ for the report, daylio is successfull because it does entry logging effortlessly and quick.
-          MaterialButton(
-            onPressed: () async{
-
-              try{
-                await context.read<EntryDB>().addEntry(
-                  Entry()    
-                  ..title = entryTitle.text
-                  ..content = entryContent.text
-                  ..mood = Mood.happy
-                  ..date = DateTime.now()
-                  ..imagePath = null
-                );
-
-                debugPrint("Entry SAVED to db message is from entries.dart");
-
-                if (!mounted) return;
-                Navigator.pop(context);
-
-                // this likne is added to save the popup after creating entry 
-                //Navigator.pop(context);
-
-                entryTitle.clear();
-                entryContent.clear();
-                entryImagePath.clear();
-
-              }catch (e){
-                debugPrint("failed TO SAVE ENTRY *(MSG FROM entries.dart)");
-              }
+          //delete button to delete entry
+          TextButton(
+            onPressed: () async {
+              await context.read<EntryDB>().deleteEntry(entry.id);
+              if (!context.mounted) return;
+              Navigator.pop(context);
             },
-            child: const Text('Submit'),
-              
-          )
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
         ]
-      ),
+
+
+      )
     );
   }
-  
+
+
+  //// EDITING ENTRY
+  void _editEntry(BuildContext context, Entry entry) {
+    // Navigate to the AddEntryPage with the existing entry data for editing
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddEntryPage(entry: entry)
+      ),
+    );
+    
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
 
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Entries'),
-      ),
+
+      backgroundColor: _cream,
+
+
+    //// ADD ENTRY BUTTON
       floatingActionButton: FloatingActionButton(
       onPressed: () {
       Navigator.push(
@@ -104,32 +112,122 @@ class _EntriesPageState extends State<EntriesPage> {
     );
     },        
     child: const Icon(Icons.add),
+
+    //// ADD ENTRY BUTTON END 
+    
+
+
       ),
       // body: const Center(
       //   child: Text('This is the Entries Page'),
-        body: Consumer<EntryDB>(
-          builder: (context, entryDB, child) {
-            final entries = entryDB.currentEntries;
-
-            if(entries.isEmpty){
+        body: SafeArea(
+          child: Consumer<EntryDB>( //updates DB when changes are made
+            builder: (context, entryDB, child) {
+              final entries = entryDB.currentEntries;
+              //if no entries, show empty message
+              if(entries.isEmpty){
               return const Center(
                 child: Text('No entries yet. Click the + button to add one!'),
+                
               );
+
             }
 
-            return ListView.builder(
-              itemCount: entries.length,
-              itemBuilder: (context, index) {
-                final entry = entries[index];
+            //IF NOT EMPTY
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //ENTRIES HEADER
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Text(
+                    'Your Entries',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
 
-                return ListTile(
-                  title: Text(entry.title ?? 'No title'),
-                  subtitle: Text(entry.content ?? 'No content'),
-                );
-              },
+                 // list of entry cards
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) => _buildCard(entries[index]),
+                  ),
+                )
+
+              ],
             );
-          }
+      },  
         )
+    ),
     );
   }
+
+  Widget _buildCard(Entry entry){
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _blue,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          //DATE of card
+          Text(
+            _formatDate(entry.date),
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white70,
+              fontWeight: FontWeight.bold
+            ),
+          ),          
+          //
+          const SizedBox(height: 12),
+          
+          Row(
+            children:[
+              
+              //MOOD EMOJI
+              Text(
+                moodEmoji(entry.mood), style: const TextStyle(fontSize: 32)),
+                const SizedBox(width: 16),
+              
+              //IMG
+              if (entry.imagePath != null)
+                Image.file(
+                  File(entry.imagePath!),
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              //push button to right
+              const Spacer(),
+              //VIEW ENTRY BTN
+              ElevatedButton(
+                onPressed: () => _viewEntry(context, entry),
+                child: const Text('View'),
+              ),
+              //
+              const SizedBox(width: 8),
+              //EDIT ENTRY BTN
+              ElevatedButton(
+                onPressed: () => _editEntry(context, entry),
+                child: const Text('Edit'),
+              ),
+              //
+
+            ]
+          )
+
+          
+        ]
+          
+      )
+
+    );
+  }
+
 }
