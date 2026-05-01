@@ -37,18 +37,26 @@ class EntryDB extends ChangeNotifier { //notify UI when data changes. auto updat
 
   //create entry
   Future<void> addEntry(Entry entry) async {
+
+    final stopwatch = Stopwatch()..start();
+
     await isar.writeTxn(() async {
       await isar.entrys.put(entry);
     });
 
     await fetchEntries();
 
-    
+    stopwatch.stop();
+    debugPrint('Time taken to add entry: ${stopwatch.elapsedMilliseconds} ms');
   }
 
 
   // read all
   Future<void> fetchEntries() async {
+
+
+    final stopwatch = Stopwatch()..start();
+
     //sort by date? 
     //future add sort by mood etc, or other filters.
     final entriesSortedByDate = await isar.entrys.where().sortByDateDesc().findAll();
@@ -57,16 +65,10 @@ class EntryDB extends ChangeNotifier { //notify UI when data changes. auto updat
 
     currentEntries.addAll(entriesSortedByDate);
 
-    for(var entry in currentEntries){
-      debugPrint(
 
-        // Console check to see if db is working=
-          'ALLLLLLLLLLLLLLLLLLLEEEEEEEEEERRRRRRRRRRRRTTTTTTTT'
-          'Title: ${entry.title}, Content: ${entry.content}, Mood: ${entry.mood}, Date: ${entry.date}',
 
-      );
-    }
-
+    stopwatch.stop();
+    debugPrint('Time taken to fetch entries: ${stopwatch.elapsedMilliseconds} ms');
 
     notifyListeners();  
 
@@ -80,19 +82,30 @@ class EntryDB extends ChangeNotifier { //notify UI when data changes. auto updat
   Future<void> updateEntry(Entry entry) async {
 
 
+
+    final stopwatch = Stopwatch()..start();
+
     await isar.writeTxn(() async {
       await isar.entrys.put(entry);
     });
 
+    stopwatch.stop();
+    debugPrint('Time taken to update entry: ${stopwatch.elapsedMilliseconds} ms');
+
     await fetchEntries();
   }
 
-  //delete a note
+  //delete a entry
   Future<void> deleteEntry(Id id) async {
+
+    final stopwatch = Stopwatch()..start();
     await isar.writeTxn(() async {
 
       await isar.entrys.delete(id);
     });
+    
+    stopwatch.stop();
+    debugPrint('Time taken to delete entry: ${stopwatch.elapsedMilliseconds} ms');
 
     await fetchEntries();
   }

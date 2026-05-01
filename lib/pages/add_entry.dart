@@ -71,7 +71,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
       setState(() => _selectedDate = pickedDate);
     }
   }
-
+  //EDIT ENTRY ! 
   Future<void> _saveEntry() async {
   if(widget.entry != null){ //IF IT EXISTS , EDIT ENTRY
     widget.entry!.title = _whatHappened.text;
@@ -80,7 +80,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
     widget.entry!.date = _selectedDate;
     widget.entry!.imagePath = _imagePath;
 
-    await context.read<EntryDB>().addEntry(widget.entry!);
+    await context.read<EntryDB>().updateEntry(widget.entry!);
   
   }else{
     final newEntry = Entry();
@@ -148,7 +148,7 @@ class _AddEntryPageState extends State<AddEntryPage>{
                 
                 // selecting mood of 
                 const Text(
-                  "How are you feeling today?",
+                  "How are you feeling today?*",
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white
